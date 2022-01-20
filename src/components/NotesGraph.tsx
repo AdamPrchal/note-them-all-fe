@@ -36,7 +36,7 @@ const NotesGraph = ({ notes }: Props) => {
       return {
         id: note.id.toString(),
         data: {
-          label: <div className="truncate">{note.topic}</div>,
+          label: <div className="truncate">{`${note.id}. ${note.topic}`}</div>,
         },
         position: getRandomPos(),
       };

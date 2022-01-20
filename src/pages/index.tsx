@@ -1,20 +1,43 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
 import { PlusIcon } from "@heroicons/react/solid";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTags } from "../app/store/tagsSlice";
 import { fetchNotes } from "../app/store/notesSlice";
-import { Note } from "../types/types";
-import { useRouter } from "next/router";
+import { Note, Tag } from "../types/types";
+import NotesTable from "../components/NotesTable";
+import NotesGraph from "../components/NotesGraph";
 
 const Home: NextPage = () => {
-  const router = useRouter()
   const dispatch = useDispatch();
+  const [searchedTopic, setSearchedTopic] = useState("");
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
+  const [shownNotesCount, setShownNotesCount] = useState(5);
+
   const notes: Note[] = useSelector((state) => state.notes.all);
-  const tags: Tag[] = useSelector((state) => state.tags.all);
+
+  const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    const newSearch = e.currentTarget.value;
+    setSearchedTopic(newSearch);
+
+    if (newSearch.length) {
+      const fittingNotes = notes.filter((note) => {
+        return note.topic.toLowerCase().includes(newSearch.toLowerCase());
+      });
+      setFilteredNotes(fittingNotes);
+    } else {
+      setFilteredNotes(notes);
+    }
+  };
+
+  const handleShowMoreNotes = () => {
+    setShownNotesCount(shownNotesCount + 5);
+  };
+
+  useEffect(() => {
+    setFilteredNotes(notes);
+  }, [notes]);
 
   useEffect(() => {
     fetchTags(dispatch);
@@ -28,6 +51,8 @@ const Home: NextPage = () => {
           type="text"
           placeholder="find by topic"
           className="input input-bordered w-80"
+          value={searchedTopic}
+          onChange={handleSearch}
         />
         <div className="divider divider-vertical">or</div>
         <Link href="/note/add">
@@ -37,53 +62,18 @@ const Home: NextPage = () => {
           </a>
         </Link>
       </div>
-      <div className="overflow-x-auto w-3/4">
-        <table className="table w-full table-zebra">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Topic</th>
-              <th>Tags</th>
-              <th>Content</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notes.map((note) => {
-              return (
-                <tr onClick={()=>{
-                  router.push(`/note/${note.id}`)
-                }} key={`${note.topic}${note.id}`} className="border-2 border-transparent border-dotted hover:cursor-pointer  hover:border-slate-200 ">
-                  <th>{note.id}</th>
-                  <td className="truncate">
-                    {note.topic.substring(0, 50)}
-                    {note.topic.length > 50 ? "..." : null}
-                  </td>
-                  <td>
-                    {
-                      <div className="flex space-x-2">
-                        {note.tags.map((tagId) => {
-                          return (
-                            <div key={tagId} className="badge badge-primary">
-                              {
-                                tags.find((tag) => {
-                                  return Number(tag.id) === tagId;
-                                })?.name
-                              }
-                            </div>
-                          );
-                        })}
-                      </div>
-                    }
-                  </td>
-                  <td className="truncate">
-                    {note.content.substring(0, 50)}
-                    {note.content.length > 50 ? "..." : null}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="w-full flex space-x-4">
+        <div className="w-1/2 flex flex-col items-center space-y-4">
+          <NotesTable notes={filteredNotes.slice(0, shownNotesCount)} />
+          {filteredNotes.length > shownNotesCount ? (
+            <button onClick={handleShowMoreNotes} className="btn btn-primary">
+              Show more
+            </button>
+          ) : null}
+        </div>
+        <div className="w-1/2 max-h-[800px] card card-bordered">
+          <NotesGraph notes={notes} />
+        </div>
       </div>
     </div>
   );

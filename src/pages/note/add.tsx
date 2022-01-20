@@ -13,14 +13,20 @@ import createNote from "../../api/createNote";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTags } from "../../app/store/tagsSlice";
 import { fetchNotes } from "../../app/store/notesSlice";
+import { toast } from "react-toastify";
+import sleep from "../../utils/sleep";
+import { useRouter } from "next/router";
 
 const Add: NextPage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const tags: Tag[] = useSelector((state) => state.tags.all);
 
   const [topic, setTopic] = useState("");
   const [content, setContent] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagSelectFormat[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const fetchedTags = tags.map((tag) => {
     return { value: tag.id, label: tag.name };
   });
@@ -34,11 +40,24 @@ const Add: NextPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newNoteData: NoteBody = {
-      topic: topic.length ? topic : "",
-      content: content.length ? content : "",
+      topic,
+      content,
       tags: selectedTags.map((tag) => tag.value),
     };
-    await createNote(newNoteData);
+    if (topic) {
+      setIsLoading(true);
+      await sleep(1000);
+      const data = await createNote(newNoteData);
+      if (data.id) {
+        toast("Note created");
+        router.push(`/note/${data.id}`);
+      } else {
+        setIsLoading(false);
+        toast(data);
+      }
+    } else {
+      toast("You must enter the topic");
+    }
   };
 
   useEffect(() => {
@@ -69,7 +88,7 @@ const Add: NextPage = () => {
             <div className="p-10 card bg-base-300 overflow-visible">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Topic</span>
+                  <span className="label-text">Topic*</span>
                 </label>
                 <input
                   type="text"
@@ -107,7 +126,11 @@ const Add: NextPage = () => {
                   }}
                 ></textarea>
 
-                <button type="submit" className="btn btn-primary">
+                <button
+                  disabled={isLoading}
+                  type="submit"
+                  className="btn btn-primary disabled"
+                >
                   Submit
                 </button>
               </div>

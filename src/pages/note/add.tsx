@@ -83,11 +83,15 @@ const Add: NextPage = () => {
             <HomeIcon className="w-8 h-8" />
           </a>
         </Link>
-        <input
-          type="text"
-          placeholder="find by topic"
-          className="input input-bordered w-80"
-        />
+
+        <div className="divider divider-vertical">or</div>
+
+        <Link href="/tag/add">
+          <a className="btn">
+            <PlusIcon className="w-8 h-8 mr-2" />
+            add tag
+          </a>
+        </Link>
       </div>
       <div className="card shadow-lg bg-base-200 w-full lg:4/5 xl:w-3/5 2xl:w-2/5 overflow-visible">
         <div className="card-body overflow-visible">

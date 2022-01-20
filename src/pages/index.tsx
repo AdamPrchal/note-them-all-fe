@@ -70,8 +70,8 @@ const Home: NextPage = () => {
           </a>
         </Link>
       </div>
-      <div className="w-full flex space-x-4">
-        <div className="w-1/2 flex flex-col items-center space-y-4">
+      <div className="w-full flex xl:space-x-4 flex-col xl:flex-row">
+        <div className="flex flex-col w-full xl:w-1/2 items-center space-y-4 mb-4 xl:mb-0">
           <NotesTable notes={filteredNotes.slice(0, shownNotesCount)} />
           {filteredNotes.length > shownNotesCount ? (
             <button onClick={handleShowMoreNotes} className="btn btn-primary">
@@ -79,7 +79,7 @@ const Home: NextPage = () => {
             </button>
           ) : null}
         </div>
-        <div className="w-1/2 min-h-[600px] max-h-[800px] card ">
+        <div className="w-full xl:w-1/2 h-[500px] xl:h-auto min-h-[600px] max-h-[800px] card ">
           <NotesGraph notes={notes} />
         </div>
       </div>

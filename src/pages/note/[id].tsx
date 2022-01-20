@@ -56,16 +56,19 @@ const NoteDetail: NextPage = () => {
             <HomeIcon className="w-8 h-8" />
           </a>
         </Link>
-        <input
-          type="text"
-          placeholder="find by topic"
-          className="input input-bordered w-80"
-        />
         <div className="divider divider-vertical">or</div>
         <Link href="/note/add">
           <a className="btn">
             <PlusIcon className="w-8 h-8 mr-2" />
-            add
+            add note
+          </a>
+        </Link>
+        <div className="divider divider-vertical">or</div>
+
+        <Link href="/tag/add">
+          <a className="btn">
+            <PlusIcon className="w-8 h-8 mr-2" />
+            add tag
           </a>
         </Link>
       </div>

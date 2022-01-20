@@ -8,7 +8,7 @@ import React, { Component, useEffect, useState } from "react";
 import Select from "react-select";
 import axios from "axios";
 import { customStyles } from "../../components/Multiselect";
-import { NoteBody, Tag, TagSelectFormat } from "../../types/types";
+import { Note, NoteBody, Tag, SelectFormat } from "../../types/types";
 import createNote from "../../api/createNote";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTags } from "../../app/store/tagsSlice";
@@ -21,20 +21,29 @@ const Add: NextPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const tags: Tag[] = useSelector((state) => state.tags.all);
+  const notes: Note[] = useSelector((state) => state.notes.all);
 
   const [topic, setTopic] = useState("");
   const [content, setContent] = useState("");
-  const [selectedTags, setSelectedTags] = useState<TagSelectFormat[]>([]);
+  const [selectedTags, setSelectedTags] = useState<SelectFormat[]>([]);
+  const [selectedNotes, setSelectedNotes] = useState<SelectFormat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchedTags = tags.map((tag) => {
     return { value: tag.id, label: tag.name };
   });
 
+  const fetchedNotes = notes.map((note) => {
+    return { value: note.id, label: note.topic };
+  });
+
   const animatedComponents = makeAnimated();
 
-  const handleChange = (selectedOption: any) => {
+  const handleTagsChange = (selectedOption: any) => {
     setSelectedTags(selectedOption);
+  };
+  const handleNotesChange = (selectedOption: any) => {
+    setSelectedNotes(selectedOption);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,6 +52,7 @@ const Add: NextPage = () => {
       topic,
       content,
       tags: selectedTags.map((tag) => tag.value),
+      links: selectedNotes.map((note) => note.value),
     };
     if (topic) {
       setIsLoading(true);
@@ -111,7 +121,21 @@ const Add: NextPage = () => {
                   defaultValue={[]}
                   isMulti
                   options={fetchedTags}
-                  onChange={handleChange}
+                  onChange={handleTagsChange}
+                />
+
+                <label className="label">
+                  <span className="label-text">Link to</span>
+                </label>
+                <Select
+                  instanceId="postType"
+                  styles={customStyles}
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  defaultValue={[]}
+                  isMulti
+                  options={fetchedNotes}
+                  onChange={handleNotesChange}
                 />
 
                 <label className="label">

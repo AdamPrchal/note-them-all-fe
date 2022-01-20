@@ -58,7 +58,15 @@ const Home: NextPage = () => {
         <Link href="/note/add">
           <a className="btn">
             <PlusIcon className="w-8 h-8 mr-2" />
-            add
+            add note
+          </a>
+        </Link>
+        <div className="divider divider-vertical">or</div>
+
+        <Link href="/tag/add">
+          <a className="btn">
+            <PlusIcon className="w-8 h-8 mr-2" />
+            add tag
           </a>
         </Link>
       </div>
@@ -71,7 +79,7 @@ const Home: NextPage = () => {
             </button>
           ) : null}
         </div>
-        <div className="w-1/2 max-h-[800px] card card-bordered">
+        <div className="w-1/2 min-h-[600px] max-h-[800px] card ">
           <NotesGraph notes={notes} />
         </div>
       </div>

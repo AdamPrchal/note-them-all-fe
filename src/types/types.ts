@@ -1,18 +1,22 @@
-export type TagSelectFormat = {
-  value: string;
+export type SelectFormat = {
+  value: number;
   label: string;
 };
 
 export type Tag = {
-  id: string;
+  id: number;
   name: string;
 };
-
 
 export type NoteBody = {
   topic: string;
   content: string;
-  tags: string[];
+  tags: number[];
+  links: number[];
+};
+
+export type TagBody = {
+  name: string;
 };
 
 export type Note = {
